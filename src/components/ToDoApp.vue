@@ -1,14 +1,15 @@
 <template>
   <div class="container">
     <!-- title -->
+    <h1 class="text-center">{{msg}}</h1>
     <h2 class="text-center mt-5">To Do App with Vue</h2>
     <!-- input -->
-    <div class="d-flex">
-      <input type="text" placeholder="Enter a to do task..." class="form-control">
-      <button class="btn btn-warning rounded-0">Sumibt</button>
+    <div class="d-flex mb-3">
+      <input v-model="task" type="text" placeholder="Enter a to do task..." class="form-control">
+      <button @click="addTask" class="btn btn-warning rounded-0">Sumibt</button>
     </div>
     <!-- task list table -->
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
       <thead>
         <tr>
           <th scope="col">Task</th>
@@ -45,6 +46,7 @@ export default {
   },
   data() {
     return {
+      task: '',
       tasks: [
         {
           name: 'Hello',
@@ -63,6 +65,22 @@ export default {
           status: 'to-do'
         }
       ]
+    }
+  },
+  methods: {
+    addTask() {
+      // console.log('add a new task');
+      // console.log(this.task);
+      if (this.task.length === 0) {
+        alert('You have to write something to insert a task!')
+      } else {
+        this.tasks.push({
+          name: this.task,
+          status: 'to-do'
+        })
+
+        this.task = ''
+      }
     }
   }
 }
