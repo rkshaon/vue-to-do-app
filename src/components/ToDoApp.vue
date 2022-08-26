@@ -6,7 +6,7 @@
     <!-- input -->
     <div class="d-flex mb-3">
       <input v-model="task" type="text" placeholder="Enter a to do task..." class="form-control">
-      <button @click="addTask" class="btn btn-warning rounded-0">Sumibt</button>
+      <button @click="addTask" class="btn btn-warning rounded-3">Add Task</button>
     </div>
     <!-- task list table -->
     <table class="table table-bordered table-striped">
@@ -23,12 +23,12 @@
           <td>{{task.name}}</td>
           <td>{{task.status}}</td>
           <td>
-            <div class="text-center">
+            <div class="text-center" @click="editTask(index)">
               <span class="fa fa-pen"></span>
             </div>
           </td>
           <td>
-            <div class="text-center">
+            <div class="text-center" @click="deleteTask(index)">
               <span class="fa fa-trash"></span>
             </div>
           </td>
@@ -44,43 +44,44 @@ export default {
   props: {
     msg: String
   },
+
   data() {
     return {
       task: '',
+      editTaskIndex: null,
       tasks: [
         {
-          name: 'Hello',
-          status: 'to-do'
-        },
-        {
-          name: 'buy something for Bhabi',
-          status: 'to-do'
-        },
-        {
-          name: 'git-post-new-repo',
-          status: 'to-do',
-        },
-        {
-          name: 'post-on-linked-in',
+          name: 'Buy something for Bhabi!',
           status: 'to-do'
         }
       ]
     }
   },
+
   methods: {
     addTask() {
-      // console.log('add a new task');
-      // console.log(this.task);
       if (this.task.length === 0) {
         alert('You have to write something to insert a task!')
-      } else {
+      } else if(this.editTaskIndex === null) {
         this.tasks.push({
           name: this.task,
           status: 'to-do'
         })
-
-        this.task = ''
+      } else {
+        this.tasks[this.editTaskIndex].name = this.task
+        this.editTaskIndex = null
       }
+
+      this.task = ''
+    },
+
+    deleteTask(index) {
+      this.tasks.splice(index, 1)
+    },
+
+    editTask(index) {
+      this.task = this.tasks[index].name
+      this.editTaskIndex = index
     }
   }
 }
