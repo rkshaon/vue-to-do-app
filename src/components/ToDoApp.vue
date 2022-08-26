@@ -6,7 +6,7 @@
     <!-- input -->
     <div class="d-flex mb-3">
       <input v-model="task" type="text" placeholder="Enter a to do task..." class="form-control">
-      <button @click="addTask" class="btn btn-warning rounded-3">Add Task</button>
+      <button @click="addTask" class="btn btn-warning rounded-3">{{buttonText}}</button>
     </div>
     <!-- task list table -->
     <table class="table table-bordered table-striped">
@@ -20,15 +20,25 @@
       </thead>
       <tbody>
         <tr v-for="(task, index) in tasks" :key="index">
-          <td>{{task.name}}</td>
-          <td>{{task.status}}</td>
+          <td :class="{'finished': task.status === 'finished'}">{{task.name}}</td>
+          <td style="width: 180px;">
+            <span 
+              class="pointer" 
+              @click="updateTaskStatus(index)"
+              :class="{'text-danger': task.status === 'to-do',
+              'text-warning': task.status === 'work in progress',
+              'text-success': task.status === 'finished'}"
+            >
+              {{firstLetterUpperCase(task.status)}}
+            </span>
+          </td>
           <td>
-            <div class="text-center" @click="editTask(index)">
+            <div class="text-center pointer" @click="editTask(index)">
               <span class="fa fa-pen"></span>
             </div>
           </td>
           <td>
-            <div class="text-center" @click="deleteTask(index)">
+            <div class="text-center pointer" @click="deleteTask(index)">
               <span class="fa fa-trash"></span>
             </div>
           </td>
@@ -49,9 +59,11 @@ export default {
     return {
       task: '',
       editTaskIndex: null,
+      availableStatuses: ['to-do', 'work in progress', 'finished'],
+      buttonText: 'Add',
       tasks: [
         {
-          name: 'Buy something for Bhabi!',
+          name: 'First task',
           status: 'to-do'
         }
       ]
@@ -73,15 +85,34 @@ export default {
       }
 
       this.task = ''
+      this.buttonText = 'Add'
     },
 
     deleteTask(index) {
       this.tasks.splice(index, 1)
+      this.editTaskIndex = null
     },
 
     editTask(index) {
       this.task = this.tasks[index].name
       this.editTaskIndex = index
+      this.buttonText = 'Update'
+    },
+
+    updateTaskStatus(index) {
+      let newStatusIndex = this.availableStatuses.indexOf(this.tasks[index].status)
+      
+      if (newStatusIndex === 2) {
+        alert('This task is already marked as finished!')
+      } else {
+        if (++newStatusIndex > 2) newStatusIndex = 0
+
+        this.tasks[index].status = this.availableStatuses[newStatusIndex]
+      }      
+    },
+
+    firstLetterUpperCase(fullText) {
+      return fullText.charAt(0).toUpperCase() + fullText.slice(1)
     }
   }
 }
@@ -89,4 +120,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
+.finished {
+  text-decoration: line-through;
+}
 </style>
